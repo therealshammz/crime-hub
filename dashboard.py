@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-DATA_DIR = "/home/therealshammz/bdata/output"
+DATA_DIR = os.path.join(os.path.dirname(__file__), "output")
 
 @st.cache_data
 def load_data(filename, sep=None):

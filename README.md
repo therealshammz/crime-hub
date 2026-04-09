@@ -1,168 +1,92 @@
-# 🚔 Chicago Crime Intelligence Hub: Complete Project Overview
+# Chicago Crime Hub
 
-This project is a high-performance big data analytics and predictive pipeline designed to process over 8.5 million crime records from the city of Chicago. It leverages Hadoop MapReduce for large-scale aggregation, PySpark for advanced temporal and spatial analysis, and a modern Streamlit dashboard for real-time intelligence visualization.
+Big data analytics platform for Chicago crime data (8.5M+ records) using Hadoop MapReduce, PySpark, and a Streamlit dashboard.
 
----
+## Features
 
-## 🏗️ System Architecture & Workflow
+- **Hadoop MapReduce** - Large-scale aggregation jobs for crime statistics
+- **PySpark ML** - Crime prediction and forecasting with Random Forest and Linear Regression
+- **FastAPI Backend** - REST API for crime intelligence data
+- **Streamlit Dashboard** - Interactive visualization with Plotly charts
 
-The following flowchart illustrates the end-to-end data lifecycle from raw ingestion to predictive insights:
+## Quick Start
 
-```mermaid
-graph TD
-    subgraph "1. Data Ingestion Layer"
-        A[Raw crimes.csv - 8.5M+ Rows] -->|HDFS PUT| B[(Hadoop HDFS)]
-    end
+### Prerequisites
 
-    subgraph "2. Processing & Analytics Layer"
-        B --> C{Hadoop MapReduce}
-        B --> D{PySpark Engine}
-        
-        C -->|Job 1: Annual Trends| E1[crime_by_year.tsv]
-        C -->|Job 2: Category Volume| E2[crime_by_type.tsv]
-        C -->|Job 3: Arrest Efficiency| E3[arrest_rate.tsv]
-        
-        D -->|Temporal Analysis| F1[Hourly/Monthly/DOW CSVs]
-        D -->|Geographic Analysis| F2[District/Location CSVs]
-        D -->|ML: Linear Regression| F3[Crime Forecasts]
-        D -->|ML: Random Forest| F4[Feature Importance]
-    end
+- Python 3.10+
+- Hadoop 3.x (for MapReduce jobs)
+- Apache Spark 3.x (for PySpark analysis)
 
-    subgraph "3. Intelligence & Visualization Layer"
-        E1 & E2 & E3 & F1 & F2 & F3 & F4 --> G[/output/ Directory]
-        
-        G --> H[FastAPI Backend]
-        G --> I[Streamlit Dashboard]
-        G --> J[Matplotlib Chart Gen]
-        
-        H -->|JSON API| K[External Clients]
-        I -->|Interactive UI| L[Law Enforcement Dashboard]
-        J -->|Static PNGs| M[Research Paper/Reports]
-    end
-```
-
----
-
-## 🚀 How to Run Everything
-
-### 1. Prerequisites & Environment Setup
-Ensure you have Hadoop and Spark configured, then set up the Python environment:
+### Installation
 
 ```bash
-# Create and activate virtual environment
+# Clone and setup
+git clone https://github.com/therealshammz/crime-hub.git
+cd crime-hub
 python -m venv venv
-source venv/bin/activate
-
-# Install core dependencies
-pip install streamlit fastapi uvicorn pandas plotly matplotlib pyspark
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-### 2. The Data Processing Pipeline
-Upload data to HDFS and run the heavy-duty analytics:
+### Data Processing
 
 ```bash
-# Ingest Data
-hdfs dfs -put dataset/crimes.csv /user/therealshammz/crimes/input/
+# Upload data to HDFS
+hdfs dfs -put dataset/crimes.csv /user/hadoop/crimes/input/
 
-# Run MapReduce Jobs (Streaming)
-hadoop jar $(which hadoop-streaming) -input ... -mapper mapreduce/crime_by_year_mapper.py -reducer ...
+# Run MapReduce jobs
+hadoop jar $(hadoop classpath | grep streaming) -input /user/hadoop/crimes/input/crimes.csv \
+  -output /user/hadoop/crimes/output/by_year \
+  -mapper mapreduce/crime_by_year_mapper.py \
+  -reducer mapreduce/crime_by_year_reducer.py
 
-# Run PySpark Advanced Analysis
-./venv/bin/python pyspark/analysis.py
-./venv/bin/python pyspark/advanced_prediction.py
+# Run PySpark analysis
+python pyspark/analysis.py
+python pyspark/predict_crime.py
 ```
 
-### 3. Launching the Intelligence Hub
-Run the backend and interactive dashboard:
+### Launch Dashboard
 
 ```bash
-# Start the FastAPI Backend (Port 8080)
-./venv/bin/python backend/main.py
+# Start FastAPI backend
+python backend/main.py
 
-# Start the Streamlit Dashboard (Port 8501)
-./venv/bin/streamlit run dashboard.py
+# Start Streamlit dashboard (new terminal)
+streamlit run dashboard.py
 ```
 
----
+## Project Structure
 
-## 🛠️ Core Components & How They Work
-
-### 📊 Data Processing (MapReduce & Spark)
-- **MapReduce**: Handles the "heavy lifting" for simple aggregations (e.g., counting 8M rows by year) by splitting the work across the Hadoop cluster.
-- **PySpark**: Used for more complex relational tasks, such as joining spatial data and performing multi-dimensional temporal analysis (Hour of Day, Day of Week).
-
-### 🧠 AI & Machine Learning
-- **Linear Regression**: Forecasts crime trends through 2030 based on historical annual data.
-- **Random Forest Classifier**: Predicts the most likely crime type for a given context (Hour, District, Domestic status). It outputs **Feature Importance**, showing that "Location" and "Time" are the strongest predictors.
-
-### 🌐 Visualization & Interaction
-- **FastAPI**: Provides a RESTful interface for the processed data, allowing external applications to query crime statistics.
-- **Streamlit**: A high-performance Python frontend that connects directly to the processed CSVs/TSVs. It provides interactive filters, Plotly-based charts, and an AI inference playground.
-- **Matplotlib**: Generates high-fidelity static charts for the included LaTeX research paper.
-
----
-
-## 🎭 Showcase & Demonstration
-
-Run these commands to verify and show off the project's key features:
-
-### 1. Launch the Intelligence Hub (Two Terminals)
-```bash
-# Terminal 1: Start the API
-./venv/bin/python backend/main.py
-
-# Terminal 2: Launch the interactive UI
-./venv/bin/streamlit run dashboard.py
+```
+crime-hub/
+├── backend/          # FastAPI REST API
+├── mapreduce/        # Hadoop Streaming jobs
+├── pyspark/          # Spark SQL & MLlib analysis
+├── output/           # Processed data (generated)
+├── visualizations/   # Matplotlib charts (generated)
+├── paper/            # LaTeX research paper
+├── dataset/          # Raw data (not included)
+├── dashboard.py      # Streamlit UI
+└── requirements.txt  # Python dependencies
 ```
 
-### 2. Inspect the Intelligence API (Live Data)
-```bash
-# Check the overview (Total Incidents, Arrest Rate)
-curl -s http://localhost:8080/api/overview | jq
+## API Endpoints
 
-# View Top Districts and their Safety Scores
-curl -s http://localhost:8080/api/districts | head -n 20 | jq
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/overview` | Total incidents, top crime, arrest rate |
+| `GET /api/trends/hourly` | Crimes by hour of day |
+| `GET /api/trends/monthly` | Crimes by month |
+| `GET /api/districts` | Crime stats by district with safety scores |
+| `GET /api/arrest-effectiveness` | Arrest rates by crime type |
+| `GET /api/predict?hour=12&district=11&domestic=false` | AI crime prediction |
 
-# Test the AI Predictor Endpoint
-curl -s "http://localhost:8080/api/predict?hour=22&district=11&domestic=true" | jq
-```
+## Dataset
 
-### 3. Verify AI Model Performance & Metrics
-```bash
-# View Random Forest accuracy and F1 scores
-cat output/model_metrics.txt
+Source: [City of Chicago Data Portal - Crimes](https://data.cityofchicago.org/Public-Safety/Crimes/6zsd-86xi)
 
-# Inspect Feature Importance data
-head -n 10 output/feature_importance.csv
-```
+This project processes crime data from 2001 to present, updated regularly by the City of Chicago.
 
-### 4. Re-generate & View Static Visualizations
-```bash
-# Refresh all 8 charts from latest data
-./venv/bin/python visualizations/generate_charts.py
+## License
 
-# List the generated visual assets
-ls -lh visualizations/*.png
-```
-
----
-
-## 📁 Key Directory Structure
-
-- `dataset/`: Raw input data.
-- `mapreduce/`: Python scripts for Hadoop Streaming jobs.
-- `pyspark/`: Spark SQL and MLlib scripts.
-- `output/`: The "Source of Truth" – processed results in CSV, TSV, and JSON.
-- `backend/`: FastAPI source code.
-- `visualizations/`: Matplotlib scripts and generated PNGs.
-- `dashboard.py`: The main Streamlit entry point.
-- `paper/`: LaTeX source for the final research report.
-
----
-
-## 🔬 System Verification
-All components have been verified:
-- ✅ **Backend**: Robust error handling for malformed data.
-- ✅ **Dashboard**: Dynamic loading of Plotly charts.
-- ✅ **ML Pipeline**: Random Forest model validated with feature importance output.
-- ✅ **Scalability**: Designed to run on multi-node Hadoop clusters.
+MIT License - see [LICENSE](LICENSE) for details.

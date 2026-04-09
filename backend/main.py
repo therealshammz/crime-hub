@@ -14,7 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DATA_DIR = "/home/therealshammz/bdata/output"
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "output")
 
 def load_csv(filename: str):
     path = os.path.join(DATA_DIR, filename)
