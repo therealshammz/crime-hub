@@ -1,0 +1,52 @@
+# Python Virtual Environments
+venv/
+.venv/
+env/
+.env/
+
+# Python Cache & Build Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Data & Database
+dataset/crimes.csv
+output/
+
+# LaTeX Artifacts (Paper)
+paper/*.aux
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.synctex.gz
+paper/*.pdf
+
+# Generated Visualizations (can be regenerated)
+visualizations/*.png
+paper/figures/*.png
+
+# IDEs & System Files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
