@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  hadoop:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java11
+    container_name: hadoop-namenode
+    environment:
+      - CLUSTER_NAME=test
+    volumes:
+      - hadoop_data:/hadoop/dfs/name
+      - ./dataset:/data/input
+      - ./output:/data/output
+    ports:
+      - "9000:9000"
+      - "9870:9870"
+    networks:
+      - hadoop-network
+
+  hadoop-datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java11
+    container_name: hadoop-datanode
+    volumes:
+      - hadoop_data:/hadoop/dfs/data
+    environment:
+      - SERVICE_NAMES=hdfs
+    networks:
+      - hadoop-network
+
+  spark-master:
+    image: bitnami/spark:3.5
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    volumes:
+      - ./output:/opt/spark/work-dir/output
+      - ./dataset:/opt/spark/work-dir/dataset
+    ports:
+      - "8080:8080"
+      - "4040:4040"
+    depends_on:
+      - hadoop
+    networks:
+      - hadoop-network
+
+  spark-worker:
+    image: bitnami/spark:3.5
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    volumes:
+      - ./output:/opt/spark/work-dir/output
+      - ./dataset:/opt/spark/work-dir/dataset
+    depends_on:
+      - spark-master
+    networks:
+      - hadoop-network
+
+  app:
+    build: .
+    container_name: crime-hub-app
+    volumes:
+      - ./output:/app/output
+      - ./visualizations:/app/visualizations
+      - ./dataset:/app/dataset
+      - ./paper:/app/paper
+    ports:
+      - "8080:8080"
+      - "8501:8501"
+    depends_on:
+      - spark-master
+    environment:
+      - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+      - SPARK_HOME=/opt/spark
+      - HADOOP_HOME=/opt/hadoop
+    networks:
+      - hadoop-network
+
+volumes:
+  hadoop_data:
+
+networks:
+  hadoop-network:
+    driver: bridge

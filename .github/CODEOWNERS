@@ -1,0 +1,30 @@
+# Code Owners for Chicago Crime Intelligence Hub
+
+# Primary maintainers
+* @therealshammz
+
+# Backend API
+/backend/* @therealshammz
+
+# PySpark analysis
+/pyspark/* @therealshammz
+
+# MapReduce jobs
+/mapreduce/* @therealshammz
+
+# Visualizations
+/visualizations/* @therealshammz
+
+# Dashboard
+/dashboard.py @therealshammz
+
+# Documentation
+/*.md @therealshammz
+/*.txt @therealshammz
+
+# Configuration
+/Dockerfile @therealshammz
+/docker-compose.yml @therealshammz
+/Makefile @therealshammz
+/pyproject.toml @therealshammz
+/requirements.txt @therealshammz

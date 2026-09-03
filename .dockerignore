@@ -1,10 +1,4 @@
-# Python Virtual Environments
-venv/
-.venv/
-env/
-.env/
-
-# Python Cache & Build Artifacts
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -26,6 +20,12 @@ wheels/
 .installed.cfg
 *.egg
 
+# Virtual Environment
+venv/
+.venv/
+env/
+.env/
+
 # Data & Database
 dataset/crimes.csv
 output/
@@ -44,7 +44,7 @@ paper/*.pdf
 visualizations/*.png
 paper/figures/*.png
 
-# IDEs & System Files
+# IDE & System Files
 .vscode/
 .idea/
 .DS_Store
@@ -62,9 +62,15 @@ htmlcov/
 .docker/
 docker-compose.override.yml
 
+# Environment
+.env
+.env.local
+
 # Logs
 *.log
 logs/
 
-# Environment
-.env.local
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini

@@ -1,0 +1,29 @@
+name: Docker Build
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build Docker image
+        run: |
+          docker build -t crime-hub:latest .
+      
+      - name: Verify Docker image
+        run: |
+          docker run --rm crime-hub:latest python --version
+      
+      - name: Run basic tests in container
+        run: |
+          docker run --rm crime-hub:latest python -c "import pandas; import pyspark; import fastapi; print('All imports successful')"
